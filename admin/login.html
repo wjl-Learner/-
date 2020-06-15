@@ -81,6 +81,7 @@
         },
         success: function (backData) {
           console.log(backData);
+
           $('#msg').text(backData.msg)
           $('#myModal').modal()
           if (backData.code == 200) {
