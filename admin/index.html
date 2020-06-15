@@ -20,12 +20,12 @@
         <a href="#" class="logo"><img src="images/logo02.png" alt="logo"></a>
         <div class="user_info">
             <img src="images/2.jpg" alt="person">
-            <span>欢迎&nbsp;&nbsp;李思思</span>
+            <span>欢迎&nbsp;&nbsp;<i style="font-style: normal;">李思思</i></span>
             <b>管理员</b>
         </div>
         <!-- 左侧导航栏 -->
         <div class="menu">
-            <div class="level01 active"><a href="#" target="main_frame"><i
+            <div class="level01 active"><a href="#" target="main_frame" id="index"><i
                         class="iconfont icon-yidiandiantubiao04"></i><span>首页</span></a></div>
             <div class="level01"><a href="#"><i class="iconfont icon-icon-article"></i><span>文章管理</span><b
                         class="iconfont icon-arrowdownl"></b></a></div>
@@ -36,9 +36,9 @@
                 </li>
             </ul>
 
-            <div class="level01"><a href="#" target="main_frame"><i
+            <div class="level01"><a href="./comment_list.html" target="main_frame"><i
                         class="iconfont icon-comment"></i><span>评论管理</span></a></div>
-            <div class="level01" id="user"><a href="#" target="main_frame"><i
+            <div class="level01" id="user"><a href="./user.html" target="main_frame"><i
                         class="iconfont icon-user"></i><span>个人中心</span></a></div>
         </div>
         <!-- 顶部栏 -->
@@ -51,8 +51,45 @@
         </div>
         <!-- 右侧主体内容 -->
         <div class="main" id="main_body">
-            
+            <iframe name="main_frame" src="./main_count.html" frameborder="0"
+                style="width: 100%;height: 100%;"></iframe>
         </div>
     </div>
+    <script src="./libs/http.js"></script>
+    <script>
+        $(function () {
+            console.log(localStorage.getItem('token'));
+            if (localStorage.getItem('token') == null) {
+                alert('请登录')
+                window.location.href = './login.html'
+            }
+            
+            $.ajax({
+                url: BigNew.user_info,
+                success: function (backData) {
+                    console.log(backData);
+                    if (backData.code == 200) {
+                        $('.user_info>img').attr('src', backData.data.userPic)
+                        $('.user_info>span>span').text(backData.nickname)
+                        $('.user_center_link>img').attr('src', backData.data.userPic)
+                    }
+
+                }
+            })
+            $('#index').on('click', function (e) {
+                e.preventDefault()
+                window.location.href = './index.html'
+            })
+            $('.logout').on('click', function () {
+                if (confirm('确定要退出吗？')) {
+                    window.location.href = './login.html'
+                    localStorage.removeItem('token')
+                }
+            })
+
+
+        })
+    </script>
 </body>
+
 </html>

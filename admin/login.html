@@ -38,9 +38,63 @@
     </div>
   </div>
 
-</body>
-<script>
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+              aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">温馨提示</h4>
+        </div>
+        <div class="modal-body" id="msg">
+          <p>One fine body&hellip;</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
 
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+</body>
+<script src="./libs/http.js"></script>
+<script>
+  $(function () {
+    $('.input_txt').trigger('focus')
+    $('.input_sub').on('click', function (e) {
+      e.preventDefault()
+      var username = $('.input_txt').val().trim()
+      var password = $('.input_pass').val().trim()
+      if (username == '' || password == '') {
+        $('#msg').text('用户或密码不能为空')
+        $('#myModal').modal()
+        return
+      }
+
+      $.ajax({
+        type: 'post',
+        url: BigNew.user_login,
+        data: {
+          username: username,
+          password: password
+        },
+        success: function (backData) {
+          console.log(backData);
+
+          $('#msg').text(backData.msg)
+          $('#myModal').modal()
+          if (backData.code == 200) {
+            $('#msg').text(backData.msg)
+            localStorage.setItem('token', backData.token)
+            $('#myModal').on('hide.bs.modal', function (e) {
+              window.location.href = './index.html'
+            })
+          }
+        }
+      })
+    })
+  })
 </script>
 
 </html>
