@@ -35,7 +35,7 @@
                         <td>奇趣事</td>
                         <td>funny</td>
                         <td class="text-center">
-                            <a href="javascript:void(0)" data-toggle="modal" class=" btn btn-info btn-xs">编辑</a>
+                            <a href="#" data-toggle="modal" class=" btn btn-info btn-xs bianji">编辑</a>
                             <a href="javascript:void(0)" class="btn btn-danger btn-xs">删除</a>
                         </td>
                     </tr>
@@ -43,7 +43,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="3" class="text-center">
-                            <a href="javascript:void(0)" class="btn btn-success" id="xinzengfenlei" data-toggle="modal"
+                            <a href="#" class="btn btn-success" id="xinzengfenlei" data-toggle="modal"
                                 data-target="#myModal">新增分类</a>
                         </td>
                     </tr>
@@ -51,5 +51,137 @@
             </table>
         </div>
     </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="exampleModalLabel">分类</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <input type="hidden" name="id" id="category_id">
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">名称:</label>
+                            <input type="text" class="form-control" id="recipient-name" name="name">
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="control-label">信息:</label>
+                            <textarea class="form-control" id="message-text" name="slug"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="addoredit">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./libs/http.js"></script>
+    <script id="category-temp" type='text/html'>
+        {{each data v}}
+        <tr>
+            <td>{{v.name}}</td>
+            <td>{{v.slug}}</td>
+            <td class="text-center">
+                <a href="#" data-toggle="modal" data-id='{{v.id}}' data-target="#myModal"
+                    class=" btn btn-info btn-xs">编辑</a>
+                <a href="#" data-id='{{v.id}}' class="btn btn-danger btn-xs del">删除</a>
+            </td>
+        </tr>
+        {{/each}}
+    </script>
+    <script>
+        // 封装获取用信息列表
+        $(function () {
+            function getData() {
+                $.ajax({
+                    type: 'get',
+                    url: BigNew.category_list,
+                    success: function (backData) {
+                        var res = template('category-temp', backData)
+                        $('tbody').html(res)
+                    }
+                })
+            }
+            // 获取用信息列表
+            getData()
+
+            //取消默认事件
+            $('#xinzengfenlei').on('click', function (e) {
+                e.preventDefault()
+            })
+            $('.bianji').on('click', function (e) {
+                e.preventDefault()
+            })
+
+            //弹框根据按钮弹出对应弹框内容
+            $('#myModal').on('show.bs.modal', function (e) {
+                if (e.relatedTarget == $('#xinzengfenlei')[0]) {
+                    $('#exampleModalLabel').text('新增分类')
+                    $('#addoredit').text('新增').addClass('btn-primary').removeClass('btn-success')
+                    $("#myModal form")[0].reset();
+                } else {
+                    $('#exampleModalLabel').text('编辑分类')
+                    $('#addoredit').text('编辑').addClass('btn-success').removeClass('btn-primary')
+                    $('#recipient-name').val($(e.relatedTarget).parent().prev().prev().text())
+                    $('#message-text').val($(e.relatedTarget).parent().prev().text())
+                    $("#category_id").val($(e.relatedTarget).attr("data-id"));
+
+                }
+            })
+
+            //根据按钮添加内容
+            $('#addoredit').on('click', function () {
+                if ($(this).text() == '新增') {
+                    var name = $('#recipient-name').val().trim()
+                    var msg = $('#message-text').val().trim()
+                    $.ajax({
+                        type: 'post',
+                        url: BigNew.category_add,
+                        data: {
+                            name: name,
+                            slug: msg
+                        },
+                        success: function (backData) {
+                            console.log(backData);
+                            if (backData.code == 201) {
+                                alert('新增成功');
+                                getData()
+                                $('#myModal').modal('hide')
+                                $('#recipient-name').val('')
+                                var msg = $('#message-text').val('')
+                            }
+
+                        }
+                    })
+                } else {
+                    var data = $("#myModal form").serialize();
+                    $.ajax({
+                        type: 'post',
+                        url: BigNew.category_edit,
+                        data: data,
+                        success: function (backData) {
+                            alert('编辑成功')
+                            getData()
+                            $('#myModal').modal('hide')
+                        }
+                    })
+                }
+            })
+            $('tbody').on('click', '.del', function (e) {
+                e.preventDefault()
+                if (confirm('确定要删除吗')) {
+                    $(this).parent().parent().empty()
+                    console.log($(this).parent().parent());
+                }
+
+
+            })
+        })
+    </script>
 
 </html>

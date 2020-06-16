@@ -47,9 +47,7 @@
                         <input style="display: block" name="userPic" type="file" id="exampleInputFile">
                         <!-- 给label标签的for属性赋值,值是input标签的id,那这样的话点击label就相当于点击了input -->
                         <br>
-                        <label for="exampleInputFile">
-                            <img src="./images/uploads_icon.jpg" style="height: 50px;" alt="">
-                        </label>
+
                     </div>
                 </div>
 
@@ -68,6 +66,43 @@
             </form>
         </div>
     </div>
+    <script src="./libs/http.js"></script>
+    <script>
+        $.ajax({
+            url: BigNew.user_detail,
+            success: function (backData) {
+                console.log(backData);
+                $('.common_title').val(backData.data.username)
+                $('.nickname').val(backData.data.nickname)
+                $('#inputEmail3').val(backData.data.email)
+                $('.user_pic').attr('src', backData.data.userPic)
+                $('#inputEmail4').val(backData.data.password)
+            }
+        })
+        $('#exampleInputFile').on('change', function () {
+            var file1 = this.files[0]
+            var url1 = URL.createObjectURL(file1)
+            $('.user_pic').attr('src', url1)
+        })
+        $('.btn-edit').on('click', function (e) {
+            e.preventDefault()
+            $.ajax({
+                type: 'post',
+                url: BigNew.user_edit,
+                data: {
+                    username: $('.common_title').val(),
+                    nickname: $('.nickname').val(),
+                    email: $('#inputEmail3').val(),
+                    userPic: $('.user_pic').attr('src'),
+                    password: $('#inputEmail4').val()
+                },
+                success:function(backData){
+                    console.log(backData);
+                    alert(backData.msg)
+                }
+            })
+        })
+    </script>
 </body>
 
 </html>

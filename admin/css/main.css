@@ -172,6 +172,9 @@ body{
     transform:rotate(90deg);
     transition:all 500ms ease;
 }
+.menu .level01 b .active{
+    transform:rotate(0deg);
+}
 
 .menu .level01 .rotate0{
     transform:rotate(0deg);
