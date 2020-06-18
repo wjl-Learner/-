@@ -86,17 +86,22 @@
         })
         $('.btn-edit').on('click', function (e) {
             e.preventDefault()
+            var form = $('#form')[0]
+            var fd = new FormData(form)
             $.ajax({
                 type: 'post',
                 url: BigNew.user_edit,
-                data: {
-                    username: $('.common_title').val(),
-                    nickname: $('.nickname').val(),
-                    email: $('#inputEmail3').val(),
-                    userPic: $('.user_pic').attr('src'),
-                    password: $('#inputEmail4').val()
-                },
-                success:function(backData){
+                data:fd,
+                contentType:false,
+                processData:false,
+                // data: {
+                //     username: $('.common_title').val(),
+                //     nickname: $('.nickname').val(),
+                //     email: $('#inputEmail3').val(),
+                //     userPic: $('.user_pic').attr('src'),
+                //     password: $('#inputEmail4').val()
+                // },
+                success: function (backData) {
                     console.log(backData);
                     alert(backData.msg)
                 }
