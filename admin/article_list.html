@@ -107,7 +107,6 @@
             $.ajax({
                 url: BigNew.category_list,
                 success: function (backData) {
-                    console.log(backData);
                     if (backData.code == 200) {
                         var res = template('categoryList', backData)
                         $('#selCategory').html(res)
@@ -196,6 +195,11 @@
                         }
                     })
                 }
+            })
+            $('#release_btn').on('click', function () {
+                // parent.$('.level02>li').eq(1).click()
+                parent.$('.level02>li').eq(1).click()
+
             })
         })
     </script>
